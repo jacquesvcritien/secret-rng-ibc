@@ -24,8 +24,7 @@ use cosmwasm_std::{
     StdResult,
     WasmMsg,
 };
-
-use crate::msg::{CallbackInfo, ExecuteMsg, InstantiateMsg, PacketMsg, QueryMsg, RandomCallback};
+use crate::msg::{CallbackInfo, ExecuteMsg, InstantiateMsg, PacketMsg, QueryMsg, RandomCallback, ResultBytes};
 use crate::state::{load_callback, save_callback, Channel, StoredRandomAnswer};
 // use crate::utils::verify_callback;
 //use secret_toolkit_crypto::Prng;
@@ -169,7 +168,15 @@ pub fn ibc_packet_receive(
                 random: rand_for_job,
                 job_id,
             };
-            response = response.set_ack(to_binary(&res).unwrap());
+
+            let json_bytes = serde_json_wasm::to_vec(&res).unwrap();
+
+            // Serialize the result_json into bytes
+            let result_bytes = ResultBytes {
+                result: (Binary(json_bytes))
+            };
+
+            response = response.set_ack(to_binary(&result_bytes).unwrap());
         }
 
         _ => {}
@@ -209,7 +216,7 @@ fn create_random_response_callback(
     Ok(WasmMsg::Execute {
         contract_addr: callback.contract.address.to_string(),
         code_hash: callback.contract.code_hash,
-        msg: to_binary(&RandomCallback::RandomResponse {
+        msg: to_binary(&RandomCallback::Result {
             job_id,
             random,
             msg: callback.msg,

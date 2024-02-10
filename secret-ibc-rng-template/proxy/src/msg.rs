@@ -33,12 +33,17 @@ pub enum PacketMsg {
     Message { value: String },
     RequestRandom { job_id: String, length: Option<u32> },
     RandomResponse { job_id: String, random: String },
+    Result (Binary),
+}
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+pub struct ResultBytes {
+    pub result: Binary,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq, JsonSchema)]
 #[serde(rename_all = "snake_case")]
 pub enum RandomCallback {
-    RandomResponse {
+    Result {
         random: String,
         job_id: String,
         msg: Option<Binary>,

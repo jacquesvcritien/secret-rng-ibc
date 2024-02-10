@@ -1,15 +1,18 @@
-# Examples of working with Secret smart contracts
+# Deploy contract to secret
 
-1. [Full stack dApp tutorial](./secret-millionaire/)
-2. [Viewing Keys tutorial](./secret-viewing-keys/)
-3. [Verifiable Randomness on Secret Network](./vrf-Randomness-Tutorial/)
-4. [Cross-chain randomness between Secret Network & Juno](./secret-ibc-rng-template/)
-5. [Secret IBC set up with Hermes Relayer](./secret-IBC-setup/)
-6. [IBC Wasm Hooks Tutorial (Auto-wrapping of Snip-20 Tokens)](./IBC-wasm-hooks-tutorial/)
+```
+#install requirements
+cd secret-ibc-rng-template/node
+npm i
 
-# Cross-Chain EVM Tutorials
+#add mnemonid
+nano .env
+MNEMONIC="mnemonic here"
 
-7. [Ethereum -> Secret Tutorial (General Message Passing with Axelar GMP)](./secret-ethereum-gmp/)
-8. [Ethereum Encryption/Decryption Tutorial with Secret Contracts](./EVM-encrypt-decrypt/)
-9. [Private Voting on the EVM with Secret Contracts](./evm-confidential-voting/)
-10. [RNG on the EVM with Snakepath](./EVM-snakepath-RNG/)
+#build and deploy
+cd ../proxy
+make build-mainnet
+make build-mainnet-reproducible
+cd ../node
+node upload_instantiate_secret_proxy
+```
